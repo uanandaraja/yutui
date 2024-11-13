@@ -21,19 +21,19 @@ fi
 
 # Build the program
 echo "Building yutui..."
-go build -o ytdl-wrapper
+go build -o yutui
 
 # Install to system or user bin
 if [ -w "/usr/local/bin" ]; then
   echo "Installing to /usr/local/bin..."
-  mv ytdl-wrapper /usr/local/bin/
+  mv yutui /usr/local/bin/
 elif [ -d "$HOME/bin" ]; then
   echo "Installing to $HOME/bin..."
-  mv ytdl-wrapper "$HOME/bin/"
+  mv yutui "$HOME/bin/"
 else
   echo "Creating $HOME/bin..."
   mkdir -p "$HOME/bin"
-  mv ytdl-wrapper "$HOME/bin/"
+  mv yutui "$HOME/bin/"
   # Add to PATH if not already there
   if [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
     echo 'export PATH="$HOME/bin:$PATH"' >>"$HOME/.bashrc"
