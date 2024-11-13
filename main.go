@@ -10,7 +10,21 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
+func printBanner() {
+	banner := `
+                __        _ 
+   __  ____  __/ /___  __(_)
+  / / / / / / / __/ / / / / 
+ / /_/ / /_/ / /_/ /_/ / /  
+ \__, /\__,_/\__/\__,_/_/   
+/____/                      
+`
+	fmt.Println(banner)
+}
+
 func main() {
+  printBanner()
+
 	// Get URL
 	urlPrompt := promptui.Prompt{
 		Label: "Enter YouTube URL",
