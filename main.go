@@ -17,17 +17,24 @@ func printBanner() {
   / / / / / / / __/ / / / / 
  / /_/ / /_/ / /_/ /_/ / /  
  \__, /\__,_/\__/\__,_/_/   
-/____/                      
+/____/ 
+                                                 
+A dead simple way to download youtube videos
 `
-	fmt.Println(banner)
+	fmt.Printf("\033[1;36m%s\033[0m\n", banner) 
 }
 
 func main() {
-  printBanner()
+	printBanner()
 
-	// Get URL
 	urlPrompt := promptui.Prompt{
-		Label: "Enter YouTube URL",
+		Label: "🔗 Input YouTube URL",
+		Templates: &promptui.PromptTemplates{
+			Prompt:  "{{ . }} ❯ ",
+			Valid:   "{{ . | green }} ❯ ",
+			Invalid: "{{ . | red }} ❯ ",
+			Success: "{{ . | bold }} ❯ ",
+		},
 		Validate: func(input string) error {
 			if !strings.Contains(input, "youtube.com") && !strings.Contains(input, "youtu.be") {
 				return fmt.Errorf("invalid YouTube URL")
@@ -36,28 +43,33 @@ func main() {
 		},
 	}
 
-	url, err := urlPrompt.Run()
-	if err != nil {
-		fmt.Printf("Prompt failed %v\n", err)
-		return
+	formatPrompt := promptui.Select{
+		Label: "📦 Select Format",
+		Items: []string{"mp4", "webm", "mp3"},
+		Templates: &promptui.SelectTemplates{
+			Label:    "{{ . }}",
+			Active:   "\033[1;36m❯ {{ . | cyan }}\033[0m",
+			Inactive: "  {{ . | white }}",
+			Selected: "\033[1;36m✔ {{ . | cyan }}\033[0m",
+		},
 	}
 
-	// Format selection
-	formats := []string{"mp4", "webm", "mp3"}
-	formatPrompt := promptui.Select{
-		Label: "Select format",
-		Items: formats,
+	url, err := urlPrompt.Run()
+	if err != nil {
+		fmt.Printf("\033[1;31m✗ Error: %v\033[0m\n", err)
+		return
 	}
 
 	_, format, err := formatPrompt.Run()
 	if err != nil {
-		fmt.Printf("Format selection failed %v\n", err)
+		fmt.Printf("\033[1;31m✗ Error: %v\033[0m\n", err)
 		return
 	}
 
 	downloadPath := filepath.Join(os.Getenv("HOME"), "Downloads")
+	fmt.Printf("\n\033[1;36m⧗ Downloading to: %s\033[0m\n", downloadPath)
 
-	// Build yt-dlp command with headers
+	// Rest of your download logic remains the same
 	var cmd *exec.Cmd
 	switch format {
 	case "mp3":
@@ -79,12 +91,12 @@ func main() {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	fmt.Println("Downloading...")
+	fmt.Println("\n\033[1;36m⧗ Starting download...\033[0m")
 	err = cmd.Run()
 	if err != nil {
-		fmt.Printf("Download failed: %v\n", err)
+		fmt.Printf("\033[1;31m✗ Download failed: %v\033[0m\n", err)
 		return
 	}
 
-	fmt.Println("Download complete!")
+	fmt.Println("\033[1;32m✔ Download complete!\033[0m")
 }
